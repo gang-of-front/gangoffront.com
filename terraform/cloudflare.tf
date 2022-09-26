@@ -45,15 +45,16 @@ resource "cloudflare_record" "www-asia" {
 }
 
 resource "cloudflare_load_balancer_monitor" "get-root-https" {
-  expected_body  = "alive"
-  expected_codes = "200"
-  method         = "GET"
-  timeout        = 5
-  path           = "/"
-  interval       = 60
-  retries        = 2
-  description    = "GET / over HTTPS - expect 200"
-  type           = "https"
+  expected_body    = "alive"
+  expected_codes   = "200"
+  method           = "GET"
+  timeout          = 5
+  path             = "/"
+  interval         = 60
+  retries          = 2
+  description      = "GET / over HTTPS - expect 200"
+  allow_insecure   = false
+  follow_redirects = true
 }
 
 resource "cloudflare_load_balancer_pool" "www-servers" {
@@ -71,6 +72,7 @@ resource "cloudflare_load_balancer_pool" "www-servers" {
   enabled            = true
   minimum_origins    = 1
   notification_email = "rafaelantoniolucio@gmail.com"
+  check_regions      = ["WNAM", "ENAM", "WEU", "EEU", "SEAS", "NEAS"]
 }
 
 resource "cloudflare_load_balancer" "www-lb" {
