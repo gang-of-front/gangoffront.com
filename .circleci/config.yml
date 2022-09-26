@@ -1,7 +1,18 @@
 version: '2.1'
 
+working_directory: &working_directory ~/gangoffront
+
 orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.3
   terraform: circleci/terraform@3.1
+
+executors:
+  default:
+    docker:
+      - image: cypress/browsers:node14.17.0-chrome91-ff89
+        environment:
+          JOBS: 2
+    working_directory: *working_directory
 
 workflows:
   deploy_infrastructure:

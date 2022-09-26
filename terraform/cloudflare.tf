@@ -29,7 +29,6 @@ resource "cloudflare_zone_settings_override" "gangoffront-com-settings" {
   zone_id = var.zone_id
 
   settings {
-    http2                    = "on"
     tls_1_3                  = "on"
     automatic_https_rewrites = "on"
     ssl                      = "strict"
