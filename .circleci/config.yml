@@ -2,6 +2,10 @@ version: '2.1'
 
 working_directory: &working_directory ~/gangoffront
 
+aliases: &attach_working_directory
+  attach_workspace:
+    at: *working_directory
+
 orbs:
   terraform: circleci/terraform@3.1
 
