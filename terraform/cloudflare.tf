@@ -56,24 +56,6 @@ resource "cloudflare_load_balancer_monitor" "get-root-https" {
   follow_redirects = true
 }
 
-resource "cloudflare_load_balancer_pool" "www-servers" {
-  name    = "www-servers"
-  monitor = cloudflare_load_balancer_monitor.get-root-https.id
-  origins {
-    name    = "www-us"
-    address = "203.0.113.10"
-  }
-  origins {
-    address = "198.51.100.15"
-    name    = "www-asia"
-  }
-  description        = "www origins"
-  enabled            = true
-  minimum_origins    = 1
-  notification_email = "rafaelantoniolucio@gmail.com"
-  check_regions      = ["WNAM", "ENAM", "WEU", "EEU", "SEAS", "NEAS"]
-}
-
 resource "cloudflare_load_balancer" "www-lb" {
   zone_id          = var.zone_id
   name             = "www-lb"
