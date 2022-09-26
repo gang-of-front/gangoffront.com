@@ -1,4 +1,5 @@
 version: '2.1'
+working_directory: &working_directory ~/gangoffront
 
 orbs:
   terraform: circleci/terraform@3.1
@@ -9,17 +10,17 @@ workflows:
       - terraform/fmt:
           checkout: true
           context: terraform
-          path: ~/terraform
+          path: ~/gangoffront/terraform
       - terraform/validate:
           checkout: true
           context: terraform
-          path: ~/terraform
+          path: ~/gangoffront/terraform
           requires:
             - terraform/fmt
       - terraform/plan:
           checkout: true
           context: terraform
-          path: ~/terraform
+          path: ~/gangoffront/terraform
           persist-workspace: true
           requires:
             - terraform/validate
@@ -30,7 +31,7 @@ workflows:
       - terraform/apply:
           attach-workspace: true
           context: terraform
-          path: ~/terraform
+          path: ~/gangoffront/terraform
           filters:
             branches:
               only: main
