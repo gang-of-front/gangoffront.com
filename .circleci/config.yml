@@ -13,13 +13,13 @@ workflows:
       - terraform/validate:
           checkout: true
           context: terraform
-          path: project/terraform
+          path: terraform
           requires:
             - terraform/fmt
       - terraform/plan:
           checkout: true
           context: terraform
-          path: project/terraform
+          path: terraform
           persist-workspace: true
           requires:
             - terraform/validate
@@ -30,7 +30,7 @@ workflows:
       - terraform/apply:
           attach-workspace: true
           context: terraform
-          path: project/terraform
+          path: terraform
           filters:
             branches:
               only: main
