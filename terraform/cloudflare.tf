@@ -13,19 +13,24 @@ variable "zone_id" {
   default = "0b140084d6f4cd3e6b278eedcf6fec1a"
 }
 
+variable "account_id" {
+  default = "5df477d4f9a8cf72185ef8f44fd1e144"
+}
+
 variable "domain" {
   default = "gangoffront.com"
 }
 
-resource "cloudflare_record" "www" {
-  zone_id = var.zone_id
-  name    = "www"
-  value   = "203.0.113.10"
-  type    = "A"
+resource "cloudflare_record" "gangoffront_com" {
+  name    = var.domain
   proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "gangoffront-com.pages.dev"
+  zone_id = var.zone_id
 }
 
-resource "cloudflare_zone_settings_override" "gangoffront-com-settings" {
+resource "cloudflare_zone_settings_override" "gangoffront_com_settings" {
   zone_id = var.zone_id
 
   settings {
@@ -35,32 +40,26 @@ resource "cloudflare_zone_settings_override" "gangoffront-com-settings" {
   }
 }
 
-resource "cloudflare_record" "www-asia" {
-  zone_id = var.zone_id
-  name    = "www"
-  value   = "198.51.100.15"
-  type    = "A"
-  proxied = true
-}
-
-resource "cloudflare_load_balancer_monitor" "get-root-https" {
-  expected_body    = "alive"
-  expected_codes   = "200"
-  method           = "GET"
-  timeout          = 5
-  path             = "/"
-  interval         = 60
-  retries          = 2
-  description      = "GET / over HTTPS - expect 200"
-  allow_insecure   = false
-  follow_redirects = true
-}
-
-resource "cloudflare_load_balancer" "www-lb" {
-  zone_id          = var.zone_id
-  name             = "www-lb"
-  default_pool_ids = [cloudflare_load_balancer_pool.www-servers.id]
-  fallback_pool_id = cloudflare_load_balancer_pool.www-servers.id
-  description      = "gangoffront load balancer"
-  proxied          = true
+resource "cloudflare_pages_project" "gangoffront_com" {
+  account_id        = var.account_id
+  name              = "gangoffront-com"
+  production_branch = "main"
+  build_config {
+    destination_dir = "build"
+    build_command   = "npm run build"
+    root_dir        = "/"
+  }
+  source {
+    type = "github"
+    config {
+      owner                         = "gang-of-front"
+      repo_name                     = "gangoffront.com"
+      production_branch             = "main"
+      pr_comments_enabled           = true
+      deployments_enabled           = false
+      production_deployment_enabled = false
+      preview_branch_includes       = ["preview"]
+      preview_branch_excludes       = ["main"]
+    }
+  }
 }

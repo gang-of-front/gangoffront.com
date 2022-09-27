@@ -17,36 +17,75 @@ executors:
           JOBS: 2
     working_directory: *working_directory
 
+commands:
+  restore_packages:
+    steps:
+      - restore_cache:
+          name: Restore Yarn Package Cache 📁
+          keys:
+            - yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v1-{{ .Branch }}-
+            - yarn-packages-v1-
+
+  save_packages:
+    steps:
+      - save_cache:
+          name: Save Yarn Package Cache 📁
+          key: yarn-packages-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+
+  install_packages:
+    steps:
+      - run:
+          name: Install project dependencies 📦
+          command: yarn install --frozen-lockfile
+
+jobs:
+  test:
+    executor: default
+    steps:
+      - checkout
+      - restore_packages
+      - authenticate_with_registry
+      - install_packages
+      - save_packages
+      - run:
+          name: Run tests 🧪
+          command: CI=true yarn test --coverage --runInBand
+
+  build:
+    executor: default
+    steps:
+      - checkout
+      - restore_packages
+      - install_packages
+      - save_packages
+      - *attach_working_directory
+      - run:
+          name: Run build 🏗
+          command: yarn build
+      - persist_to_workspace:
+          root: *working_directory
+          paths:
+            - build
+            - node_modules
+
+  deploy:
+    docker:
+      - image: cimg/node:18.7.0
+    steps:
+      - checkout
+      - *attach_working_directory
+      - run:
+          name: Deploy production 🔥🚀
+          command: npx wrangler pages publish build --project-name=gangoffront-com
+
 workflows:
-  deploy_infrastructure:
+  deploy_application:
     jobs:
-      - terraform/fmt:
-          checkout: true
-          context: terraform
-          path: terraform
-      - terraform/validate:
-          checkout: true
-          context: terraform
-          path: terraform
+      - build
+      - deploy:
+          context: cloudflare
           requires:
-            - terraform/fmt
-      - terraform/plan:
-          checkout: true
-          context: terraform
-          path: terraform
-          persist-workspace: true
-          requires:
-            - terraform/validate
-      - approval:
-          type: approval
-          requires:
-            - terraform/plan
-      - terraform/apply:
-          attach-workspace: true
-          context: terraform
-          path: terraform
-          filters:
-            branches:
-              only: main
-          requires:
-            - approval
+            - build
