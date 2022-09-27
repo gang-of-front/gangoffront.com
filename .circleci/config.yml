@@ -74,6 +74,7 @@ jobs:
   deploy:
     docker:
       - image: cimg/node:18.7.0
+    working_directory: *working_directory
     steps:
       - checkout
       - *attach_working_directory
