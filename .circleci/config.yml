@@ -12,7 +12,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: cypress/browsers:node14.17.0-chrome91-ff89
+      - image: cypress/browsers:node17.8.0-chrome99-ff97-slim
         environment:
           JOBS: 2
     working_directory: *working_directory
@@ -72,9 +72,7 @@ jobs:
             - node_modules
 
   deploy:
-    docker:
-      - image: cimg/node:18.7.0
-    working_directory: *working_directory
+    executor: default
     steps:
       - checkout
       - *attach_working_directory
