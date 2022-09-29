@@ -61,13 +61,12 @@ resource "cloudflare_zone_settings_override" "gangoffront_com_settings" {
     tls_1_3                  = "on"
     automatic_https_rewrites = "on"
     ssl                      = "strict"
-    waf                      = "on"
   }
 }
 
 resource "cloudflare_page_rule" "www_to_gangoffront_com" {
   zone_id  = var.zone_id
-  target   = "www.${var.domain}"
+  target   = "www.${var.domain}/*"
   priority = 1
   status   = "active"
 
@@ -75,7 +74,7 @@ resource "cloudflare_page_rule" "www_to_gangoffront_com" {
     ssl = "strict"
     forwarding_url {
       status_code = 301
-      url         = var.domain
+      url         = "https://${var.domain}/*"
     }
   }
 }
