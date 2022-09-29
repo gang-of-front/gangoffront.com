@@ -66,6 +66,7 @@ resource "cloudflare_page_rule" "www_to_gangoffront_com" {
   status   = "active"
   target   = "www.${var.domain}/*"
   zone_id  = var.zone_id
+
   actions {
     forwarding_url {
       status_code = 301
