@@ -65,13 +65,11 @@ resource "cloudflare_zone_settings_override" "gangoffront_com_settings" {
 }
 
 resource "cloudflare_page_rule" "www_to_gangoffront_com" {
-  zone_id  = var.zone_id
-  target   = "www.${var.domain}/*"
   priority = 1
   status   = "active"
-
+  target   = "www.${var.domain}/*"
+  zone_id  = var.zone_id
   actions {
-    ssl = "strict"
     forwarding_url {
       status_code = 301
       url         = "https://${var.domain}/*"
