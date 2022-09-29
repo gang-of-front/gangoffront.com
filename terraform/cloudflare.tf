@@ -28,6 +28,7 @@ variable "domain" {
   default = "gangoffront.com"
 }
 
+
 variable "project_name" {
   default = "gangoffront-com"
 }
@@ -42,12 +43,12 @@ resource "cloudflare_record" "www" {
 }
 
 resource "cloudflare_record" "gangoffront_com_pages" {
-  name    = "gangoffront.com"
+  name    = var.domain
   proxied = true
   ttl     = 1
   type    = "CNAME"
-  value   = "gangoffront-com.pages.dev"
-  zone_id = "0b140084d6f4cd3e6b278eedcf6fec1a"
+  value   = format("%s.pages.dev", var.project_name)
+  zone_id = var.zone_id
 }
 
 resource "cloudflare_zone_settings_override" "gangoffront_com_settings" {
@@ -68,7 +69,7 @@ resource "cloudflare_page_rule" "www_to_gangoffront_com" {
   actions {
     forwarding_url {
       status_code = 301
-      url         = "https://${var.domain}/*"
+      url         = "https://${var.domain}"
     }
   }
 }
