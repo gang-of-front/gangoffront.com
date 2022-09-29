@@ -36,6 +36,10 @@ variable "domain" {
   default = "gangoffront.com"
 }
 
+variable "project_name" {
+  default = "gangoffront-com"
+}
+
 resource "cloudflare_record" "www" {
   name    = "www"
   proxied = true
@@ -99,4 +103,10 @@ resource "cloudflare_pages_project" "gangoffront_com" {
       preview_branch_excludes       = ["main"]
     }
   }
+}
+
+resource "cloudflare_pages_domain" "gangoffront_com" {
+  account_id   = var.account_id
+  project_name = var.project_name
+  domain       = var.domain
 }
