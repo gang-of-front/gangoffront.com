@@ -1,4 +1,19 @@
 terraform {
+  cloud {
+    organization = "gangoffront"
+
+    workspaces {
+      name = "gangoffrontcom"
+    }
+  }
+  # backend "s3" {
+  #   bucket         = "terraform-gangoffront-state-prod"
+  #   key            = "terraform-cloudflare/zones/gangoffront-com/02-page-rules"
+  #   region         = "us-east-1"
+  #   encrypt        = "true"
+  #   dynamodb_table = "terraform-gangoffront-state-lock-prod"
+  #   acl            = "bucket-owner-full-control"
+  # }
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
@@ -21,13 +36,22 @@ variable "domain" {
   default = "gangoffront.com"
 }
 
-resource "cloudflare_record" "gangoffront_com" {
-  name    = var.domain
+resource "cloudflare_record" "www" {
+  name    = "www"
+  proxied = true
+  ttl     = 1
+  type    = "AAAA"
+  value   = "100::"
+  zone_id = var.zone_id
+}
+
+resource "cloudflare_record" "gangoffront_com_pages" {
+  name    = "gangoffront.com"
   proxied = true
   ttl     = 1
   type    = "CNAME"
   value   = "gangoffront-com.pages.dev"
-  zone_id = var.zone_id
+  zone_id = "0b140084d6f4cd3e6b278eedcf6fec1a"
 }
 
 resource "cloudflare_zone_settings_override" "gangoffront_com_settings" {
@@ -37,6 +61,22 @@ resource "cloudflare_zone_settings_override" "gangoffront_com_settings" {
     tls_1_3                  = "on"
     automatic_https_rewrites = "on"
     ssl                      = "strict"
+    waf                      = "on"
+  }
+}
+
+resource "cloudflare_page_rule" "www_to_gangoffront_com" {
+  zone_id  = var.zone_id
+  target   = "www.${var.domain}"
+  priority = 1
+  status   = "active"
+
+  actions {
+    ssl = "strict"
+    forwarding_url {
+      status_code = 301
+      url         = var.domain
+    }
   }
 }
 
