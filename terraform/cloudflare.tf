@@ -104,9 +104,3 @@ resource "cloudflare_pages_project" "gangoffront_com" {
     }
   }
 }
-
-resource "cloudflare_pages_domain" "gangoffront_com" {
-  account_id   = var.account_id
-  project_name = var.project_name
-  domain       = var.domain
-}
