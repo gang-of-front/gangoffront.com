@@ -6,14 +6,6 @@ terraform {
       name = "gangoffrontcom"
     }
   }
-  # backend "s3" {
-  #   bucket         = "terraform-gangoffront-state-prod"
-  #   key            = "terraform-cloudflare/zones/gangoffront-com/02-page-rules"
-  #   region         = "us-east-1"
-  #   encrypt        = "true"
-  #   dynamodb_table = "terraform-gangoffront-state-lock-prod"
-  #   acl            = "bucket-owner-full-control"
-  # }
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
