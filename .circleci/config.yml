@@ -78,7 +78,7 @@ jobs:
       - *attach_working_directory
       - run:
           name: Deploy production 🔥🚀
-          command: npx wrangler pages publish build --project-name=gangoffront-com
+          command: npx wrangler pages publish build --project-name=gangoffront-com --env staging
 
 workflows:
   deploy_application:
