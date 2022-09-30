@@ -12,7 +12,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: cypress/browsers:node16.13.2-chrome100-ff98
+      - image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
         environment:
           JOBS: 2
     working_directory: *working_directory
