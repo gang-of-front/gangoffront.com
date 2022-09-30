@@ -1,38 +1,4 @@
-terraform {
-  cloud {
-    organization = "gangoffront"
-
-    workspaces {
-      name = "gangoffrontcom"
-    }
-  }
-  required_providers {
-    cloudflare = {
-      source  = "cloudflare/cloudflare"
-      version = "~> 3.0"
-    }
-  }
-}
-
-provider "cloudflare" {}
-
-variable "zone_id" {
-  default = "0b140084d6f4cd3e6b278eedcf6fec1a"
-}
-
-variable "account_id" {
-  default = "5df477d4f9a8cf72185ef8f44fd1e144"
-}
-
-variable "domain" {
-  default = "gangoffront.com"
-}
-
-
-variable "project_name" {
-  default = "gangoffront-com"
-}
-
+# Production Environment
 resource "cloudflare_record" "www" {
   name    = "www"
   proxied = true
@@ -41,7 +7,6 @@ resource "cloudflare_record" "www" {
   value   = "100::"
   zone_id = var.zone_id
 }
-
 resource "cloudflare_record" "gangoffront_com_pages" {
   name    = var.domain
   proxied = true
@@ -50,7 +15,6 @@ resource "cloudflare_record" "gangoffront_com_pages" {
   value   = format("%s.pages.dev", var.project_name)
   zone_id = var.zone_id
 }
-
 resource "cloudflare_zone_settings_override" "gangoffront_com_settings" {
   zone_id = var.zone_id
 
@@ -74,7 +38,6 @@ resource "cloudflare_page_rule" "www_to_gangoffront_com" {
     }
   }
 }
-
 resource "cloudflare_pages_project" "gangoffront_com" {
   account_id        = var.account_id
   name              = "gangoffront-com"
@@ -97,4 +60,13 @@ resource "cloudflare_pages_project" "gangoffront_com" {
       preview_branch_excludes       = ["main"]
     }
   }
+}
+# Staging Environment
+resource "cloudflare_record" "staging_gangoffront_com_pages" {
+  name    = format("staging.%s", var.domain)
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = format("staging.%s.pages.dev", var.project_name)
+  zone_id = var.zone_id
 }
