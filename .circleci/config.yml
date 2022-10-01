@@ -78,12 +78,7 @@ jobs:
       - *attach_working_directory
       - run:
           name: Deploy production 🔥🚀
-          command: |
-            if [ "$CIRCLE_BRANCH" = "staging" ]; then
-               npx wrangler pages publish build --project-name=gangoffront-com --branch staging
-            else
-               npx wrangler pages publish build --project-name=gangoffront-com
-            fi
+          command: npx wrangler pages publish build --project-name=gangoffront-com
 
 workflows:
   deploy_application:
