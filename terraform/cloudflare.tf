@@ -62,11 +62,11 @@ resource "cloudflare_pages_project" "gangoffront_com" {
   }
 }
 # Staging Environment
-resource "cloudflare_record" "staging_gangoffront_com_pages" {
-  name    = "staging"
-  proxied = true
-  ttl     = 1
-  type    = "CNAME"
-  value   = format("staging.%s.pages.dev", var.project_name)
-  zone_id = var.zone_id
-}
+# resource "cloudflare_record" "staging_gangoffront_com_pages" {
+#   name    = "staging"
+#   proxied = true
+#   ttl     = 1
+#   type    = "CNAME"
+#   value   = format("staging.%s.pages.dev", var.project_name)
+#   zone_id = var.zone_id
+# }
