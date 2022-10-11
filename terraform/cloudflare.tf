@@ -61,6 +61,13 @@ resource "cloudflare_pages_project" "gangoffront_com" {
     }
   }
 }
+
+resource "cloudflare_pages_domain" "prod" {
+  account_id   = var.account_id
+  project_name = var.project_name
+  domain       = var.domain
+}
+
 # Staging Environment
 
 resource "cloudflare_record" "staging_gangoffront_com_pages" {
@@ -70,4 +77,10 @@ resource "cloudflare_record" "staging_gangoffront_com_pages" {
   type    = "CNAME"
   value   = format("staging.%s.pages.dev", var.project_name)
   zone_id = var.zone_id
+}
+
+resource "cloudflare_pages_domain" "staging" {
+  account_id   = var.account_id
+  project_name = var.project_name
+  domain       = format("staging.%s.pages.dev", var.project_name)
 }
