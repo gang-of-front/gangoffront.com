@@ -82,5 +82,5 @@ resource "cloudflare_record" "staging_gangoffront_com_pages" {
 resource "cloudflare_pages_domain" "staging" {
   account_id   = var.account_id
   project_name = var.project_name
-  value   = format("staging.%s", var.domain)
+  domain       = format("staging.%s", var.domain)
 }
