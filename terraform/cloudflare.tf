@@ -75,7 +75,7 @@ resource "cloudflare_record" "staging_gangoffront_com_pages" {
   proxied = true
   ttl     = 1
   type    = "CNAME"
-  value   = format("staging.%s.pages.dev", var.project_name)
+  value   = format("staging.%s", var.domain)
   zone_id = var.zone_id
 }
 
