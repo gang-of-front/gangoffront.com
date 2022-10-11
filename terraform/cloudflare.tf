@@ -63,7 +63,7 @@ resource "cloudflare_pages_project" "gangoffront_com" {
 }
 
 # Staging Environment
-resource "cloudflare_record" "staging_gangoffront_com_pages" {
+resource "cloudflare_record" "terraform_managed_resource_0350425acb487c0fd90aabca13260174" {
   name    = "staging"
   proxied = true
   ttl     = 1
