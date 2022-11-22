@@ -1,12 +1,18 @@
-export async function onRequest({request, next, env }) {
-  const res = await next()
-  const { pathname } = new URL(request.url)
+addEventListener("fetch", (event) => {
+  event.respondWith(
+    handleRequest(event.request).catch(
+      (err) => new Response(err.stack, { status: 500 })
+    )
+  );
+});
 
-  const proxy = 'https://realworld-qwik.gangoffront.com'
+async function handleRequest({ request, next }) {
+  const res = await next();
+  const { url } = new URL(request.url);
 
-  if(pathname.startsWith('/realworld')) {
-    return new Response.redirect(proxy, 307)
+  if (url.pathname.startsWith("/realworld")) {
+    return fetch(`https://realworld-qwik.gangoffront.com?`);
   }
-
-  return res
+  
+  return res;
 }
