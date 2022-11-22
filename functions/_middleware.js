@@ -3,7 +3,7 @@ export function onRequest({ request, next }) {
 
   if (url.pathname === "proxy") {
     return new Response(JSON.stringify(url, undefined, 2));
+  } else {
+    return next();
   }
-
-  return next();
 }
