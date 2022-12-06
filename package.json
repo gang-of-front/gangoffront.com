@@ -9,6 +9,7 @@
     "web-vitals": "^1.1.2"
   },
   "devDependencies": {
+    "@babel/helper-environment-visitor": "^7.18.9",
     "@babel/helper-string-parser": "^7.19.4",
     "@cloudflare/workers-types": "^4.20221111.1",
     "@testing-library/jest-dom": "^5.16.2",
