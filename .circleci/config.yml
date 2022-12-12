@@ -23,15 +23,15 @@ commands:
       - restore_cache:
           name: Restore Yarn Package Cache 📁
           keys:
-            - yarn-packages-v2-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - yarn-packages-v2-{{ .Branch }}-
-            - yarn-packages-v2-
+            - yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
+            - yarn-packages-v3-{{ .Branch }}-
+            - yarn-packages-v3-
 
   save_packages:
     steps:
       - save_cache:
           name: Save Yarn Package Cache 📁
-          key: yarn-packages-v2-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          key: yarn-packages-v3-{{ .Branch }}-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
 
