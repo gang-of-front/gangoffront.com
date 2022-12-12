@@ -1,8 +1,13 @@
-async function proxy(url, path, destination, fn) {
-  if (url.pathname === path) {
-    const head = await fetch(destination)
+async function proxy(url, regexp, destination, fn) {
+  console.log(url.pathname, regexp)
+  const matchResult = url.pathname.match(regexp)
 
-    const response = new Response(JSON.stringify(await head.json()), head)
+  if (matchResult && matchResult[1]) {
+    const dest = destination.replace(':splat', matchResult[1])
+    console.log({ dest })
+    const head = await fetch(dest)
+
+    const response = new Response(await head.text(), head)
 
     fn?.(response)
 
@@ -17,13 +22,20 @@ export async function onRequest({ request, next, env }) {
 
   let response = null
 
-  response = await proxy(url, '/import-map.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')
+  response = await proxy(url, /\/root-mf-logged-area\/(.*)/, 'https://root-mf-logged-area-staging.netlify.app/root-mf-logged-area/:splat')
+  response = await proxy(url, /\/auth\/(.*)/, 'https://root-mf-logged-area-staging.netlify.app/auth/:splat')
 
   if (response) {
     return response
   }
 
-  response = await proxy(url, '/import-map2.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
+  response = await proxy(url, /(\/import-map.json)/, 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')
+
+  if (response) {
+    return response
+  }
+
+  response = await proxy(url, /(\/import-map2.json)/, 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
     config.headers.set('Access-Control-Allow-Origin', '*')
     config.headers.set('X-Frame-Options', 'DENY')
     config.headers.set('X-Content-Type-Options', 'nosniff')
@@ -33,11 +45,11 @@ export async function onRequest({ request, next, env }) {
     return response
   }
 
-  response = await proxy(url, '/import-map3.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
+  response = await proxy(url, /(\/import-map3.json)/, 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
     config.headers.set('Access-Control-Allow-Origin', '*')
     config.headers.set('X-Frame-Options', 'DENY')
     config.headers.set('X-Content-Type-Options', 'nosniff')
-    config.headers.set('Cache-Control', 'max - age=1500')
+    config.headers.set('Cache-Control', 'age=1500')
   })
 
   if (response) {
