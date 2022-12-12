@@ -17,13 +17,13 @@ export async function onRequest({ request, next, env }) {
 
   let response = null
 
-  response = proxy(url, 'import-map.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')
+  response = await proxy(url, 'import-map.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')
 
   if (response) {
     return response
   }
 
-  response = proxy(url, 'import-map2.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
+  response = await proxy(url, 'import-map2.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
     config.headers.set('Access-Control-Allow-Origin', '*')
     config.headers.set('X-Frame-Options', 'DENY')
     config.headers.set('X-Content-Type-Options', 'nosniff')
@@ -33,7 +33,7 @@ export async function onRequest({ request, next, env }) {
     return response
   }
 
-  response = proxy(url, 'import-map3.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
+  response = await proxy(url, 'import-map3.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', config => {
     config.headers.set('Access-Control-Allow-Origin', '*')
     config.headers.set('X-Frame-Options', 'DENY')
     config.headers.set('X-Content-Type-Options', 'nosniff')
