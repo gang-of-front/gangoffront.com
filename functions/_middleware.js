@@ -8,7 +8,7 @@ export async function onRequest({ request, next, env }) {
   if (url.pathname === "/import-map2.json") {
     const head = await fetch('https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')
 
-    const response = new Response(JSON.stringify(head.json()))
+    const response = new Response(JSON.stringify(await head.json()))
 
     response.headers.set('Access-Control-Allow-Origin', '*')
     response.headers.set('X-Frame-Options', 'DENY')
@@ -20,7 +20,7 @@ export async function onRequest({ request, next, env }) {
   if (url.pathname === "/import-map3.json") {
     const head = await fetch('https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')
 
-    const response = new Response(JSON.stringify(head.json()), head)
+    const response = new Response(JSON.stringify(await head.json()), head)
 
     response.headers.set('Access-Control-Allow-Origin', '*')
     response.headers.set('X-Frame-Options', 'DENY')
