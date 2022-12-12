@@ -1,11 +1,10 @@
-export async function onRequest(context) {
-  console.log({ context })
+export async function onRequest({ request, next, env }) {
+  console.log({ request, next, env })
+  const url = new URL(request.url)
 
-  const url = new URL(context.request.url)
-
-  if (url.pathname.startsWith('/test')) {
-    console.log('proxy', { context, url })
-    return new Response('proxy response')
+  if (url.pathname === "/import-map.json") {
+    console.log('caiu aqui')
+    return env.ASSETS.fetch('https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')
   }
 
   return new Response('hello world');
