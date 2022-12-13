@@ -1,12 +1,25 @@
-const proxy = (regexp,destination, fn) => async (context) => {
+function Parser(origin, destination) {
+  const expression = origin.replace('*', `(.*)|${origin.replace('/*', '')}$`)
+
+  return function(url){
+    const metcher = url.match(new RegExp(expression))
+
+    if(metcher) {
+      const splat = metcher[1] ?? ''
+      return destination.replace('/:splat', `/${splat}`)
+    }
+
+    return null
+  }
+}
+
+const proxy = (parserUrl, fn) => async (context) => {
   const url = new URL(context.request.url)
 
-  const matchResult = url.pathname.match(regexp)
+  const destination = parserUrl(url.pathname)
 
-  if (matchResult && matchResult[1]) {
-    const dest = destination.replace(':splat', matchResult[1])
-
-    const head = await fetch(dest)
+  if (destination) {
+    const head = await fetch(destination)
 
     const response = new Response(await head.text(), head)
 
@@ -19,10 +32,10 @@ const proxy = (regexp,destination, fn) => async (context) => {
 }
 
 export const onRequest = [
-  proxy(/(\/import-map.json)/, 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json'),
-  proxy(/\/root-mf-logged-area\/(.*)/, 'https://root-mf-logged-area-staging.netlify.app/root-mf-logged-area/:splat'),
-  proxy(/\/auth\/(.*)/, 'https://root-mf-logged-area-staging.netlify.app/auth/:splat'),
-  proxy(/(\/import-map2.json)/, 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json', (response)=>{
+  proxy(Parser('/root-mf-logged-area/*', 'https://root-mf-logged-area-staging.netlify.app/root-mf-logged-area/:splat')),
+  proxy(Parser('/auth/*', 'https://root-mf-logged-area-staging.netlify.app/auth/:splat')),
+  proxy(Parser('/import-map.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json')),
+  proxy(Parser('/import-map2.json', 'https://growth-import-map-logged-area-staging.s3.amazonaws.com/import-map.json'), (response)=>{
     response.headers.set('Access-Control-Allow-Origin', '*')
     response.headers.set('X-Frame-Options', 'DENY')
     response.headers.set('X-Content-Type-Options', 'nosniff')

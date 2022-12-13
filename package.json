@@ -11,7 +11,6 @@
   "devDependencies": {
     "@babel/helper-environment-visitor": "^7.18.9",
     "@babel/helper-string-parser": "^7.19.4",
-    "@cloudflare/workers-types": "^4.20221111.1",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3"
